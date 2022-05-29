@@ -1,18 +1,19 @@
 class Display {
     constructor(id, del, clear) {
         this.node = document.querySelector(`#${id}`);
-        this.del = del;
-        this.clear = clear;
         this.arithBuffer = {
-            fst: "",
+            fst: "0",
             snd: "",
             op: null,
             clear: function() {
-                this.fst = "";
+                this.fst = "0";
                 this.op = null;
                 this.snd = "";
             }
         };
+        this.node.textContent = this.arithBuffer.fst;
+        this.del = del;
+        this.clear = clear;
 
         this.setFst = function(num, append = true) {
             if(append) {
@@ -102,7 +103,7 @@ class NumberButton extends NodeButton {
             e.stopPropagation();
             this.node.classList.add('active');
             if(display.arithBuffer.op == null) {
-                display.setFst(this.value);
+                display.setFst(this.value, display.arithBuffer.fst === '0' ? false : true);
                 return;
             }
             if(display.arithBuffer.op !== null) {
@@ -124,7 +125,6 @@ const deleteFunc = function() {
         if(display.arithBuffer.op === null) {
             if(display.arithBuffer.fst === "") return;
             else {
-                console.log(display.arithBuffer.fst.slice(0, -1));
                 display.setFst(display.arithBuffer.fst.slice(0, -1), false);
                 return;
             }
@@ -141,7 +141,7 @@ const deleteFunc = function() {
 
 const clearFunc = function(clearBuffer = true) {
     if(clearBuffer) display.arithBuffer.clear();
-    display.node.textContent = "";
+    display.node.textContent = display.fst;
 }
 
 const display = new Display('display', deleteFunc, clearFunc);
