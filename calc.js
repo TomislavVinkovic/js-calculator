@@ -21,7 +21,7 @@ class Display {
                 this.node.textContent += num;
             }
             else {
-                this.arithBuffer.fst = num;
+                this.arithBuffer.fst = "" + num;
                 this.updateScreen();
             }
         }
@@ -41,7 +41,7 @@ class Display {
                 this.node.textContent += num;
             }
             else {
-                this.arithBuffer.snd = num;
+                this.arithBuffer.snd = "" + num;
                 this.updateScreen();
             }
         }
@@ -103,11 +103,11 @@ class NumberButton extends NodeButton {
             e.stopPropagation();
             this.node.classList.add('active');
             if(display.arithBuffer.op == null) {
-                display.setFst(this.value, display.arithBuffer.fst === '0' ? false : true);
+                display.setFst(this.value, (display.arithBuffer.fst === '0' && this.value !== '.') ? false : true);
                 return;
             }
             if(display.arithBuffer.op !== null) {
-                display.setSnd(this.value);
+                display.setSnd(this.value, (display.arithBuffer.snd === '0' && this.value !== '.') ? false : true);
                 return;
             }
         });
@@ -123,8 +123,12 @@ const calculator = document.querySelector('#calculator');
 const deleteFunc = function() {
     if(display.arithBuffer.snd === "") {
         if(display.arithBuffer.op === null) {
-            if(display.arithBuffer.fst === "") return;
+            if(display.arithBuffer.fst === "0") return;
             else {
+                if(display.arithBuffer.fst.length === 1) {
+                    display.setFst("0", false);
+                    return;
+                }
                 display.setFst(display.arithBuffer.fst.slice(0, -1), false);
                 return;
             }
@@ -135,6 +139,14 @@ const deleteFunc = function() {
         }
     }
     else {
+        if(display.arithBuffer.snd === "0") {
+            display.setSnd("", false);
+            return;
+        }
+        if(display.arithBuffer.snd.length === 1) {
+            display.setSnd("0", false);
+            return;
+        }
         display.setSnd(display.arithBuffer.snd.slice(0, -1), false);
     }
 }
